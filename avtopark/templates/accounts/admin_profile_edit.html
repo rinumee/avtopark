@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profil - Avtopark</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; }
+        .sidebar { width: 260px; background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%); color: white; position: fixed; height: 100%; padding: 20px; }
+        .logo { font-size: 24px; font-weight: bold; text-align: center; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px; }
+        .nav-item { padding: 12px 20px; margin: 5px 0; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); }
+        .nav-item a { color: white; text-decoration: none; display: block; }
+        .main-content { margin-left: 260px; padding: 20px; }
+        .top-bar { background: white; padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logout-btn { background: #e74c3c; color: white; padding: 8px 20px; border-radius: 8px; text-decoration: none; }
+        .section { background: white; border-radius: 15px; padding: 25px; max-width: 600px; margin: 0 auto; }
+        .section-title { font-size: 20px; font-weight: bold; margin-bottom: 20px; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .form-control:focus { outline: none; border-color: #3498db; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-secondary { background: #95a5a6; color: white; }
+        .alert { padding: 12px; border-radius: 8px; margin-bottom: 20px; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info-text { font-size: 12px; color: #7f8c8d; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">🚗 AVTOPARK</div>
+        <div class="nav-item"><a href="{% url 'admin_dashboard' %}">📊 Dashboard</a></div>
+        <div class="nav-item"><a href="{% url 'car_list' %}">🚗 Avtomobillar</a></div>
+        <div class="nav-item"><a href="{% url 'booking_list' %}">📅 Bronlar</a></div>
+        <div class="nav-item"><a href="{% url 'admin_user_list' %}">👥 Foydalanuvchilar</a></div>
+        <div class="nav-item active"><a href="{% url 'admin_settings' %}">⚙️ Sozlamalar</a></div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <h2>👤 Admin Profil</h2>
+            <div>
+                <span style="margin-right: 20px;">👑 {{ user.full_name }}</span>
+                <a href="{% url 'logout' %}" class="logout-btn">Chiqish</a>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="section">
+            <div class="section-title">📝 Profil ma'lumotlari</div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" value="{{ admin_user.username }}" class="form-control" disabled>
+                    <div class="info-text">Username o'zgartirib bo'lmaydi</div>
+                </div>
+                <div class="form-group">
+                    <label>To'liq ism</label>
+                    <input type="text" name="full_name" value="{{ admin_user.full_name }}" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Telefon raqam</label>
+                    <input type="tel" name="phone" value="{{ admin_user.phone }}" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ admin_user.email }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Yangi parol (agar o'zgartirmoqchi bo'lsangiz)</label>
+                    <input type="password" name="new_password" class="form-control" placeholder="Yangi parol">
+                    <div class="info-text">Agar parolni o'zgartirmoqchi bo'lmasangiz, bo'sh qoldiring</div>
+                </div>
+                <button type="submit" class="btn btn-primary">💾 Saqlash</button>
+                <a href="{% url 'admin_settings' %}" class="btn btn-secondary">❌ Bekor qilish</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

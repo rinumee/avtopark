@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foydalanuvchi Paneli - Avtopark</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .car-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .car-image {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .car-info {
+            padding: 20px;
+        }
+
+        .car-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .car-details {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .btn-book {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        .btn-book:hover {
+            background: #2980b9;
+        }
+
+        .bookings-table {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #cce5ff; color: #004085; }
+        .status-active { background: #d1ecf1; color: #0c5460; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo">🚗 AVTOPARK</div>
+        <div class="user-info">
+            <span>👤 {{ user.full_name }}</span>
+            <a href="{% url 'logout' %}" class="logout-btn">Chiqish</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome-card">
+            <h1>Xush kelibsiz, {{ user.full_name }}! 🥰</h1>
+            <p style="margin-top: 10px;">Avtomobil ijarasi tizimiga xush kelibsiz. O'zingizga mos avtomobilni tanlang va sayohatingizni boshlang!</p>
+        </div>
+
+        <div class="section-title">🚗 Mavjud avtomobillar</div>
+        <div class="cars-grid">
+            {% for car in available_cars %}
+            <div class="car-card">
+                <div class="car-image">
+                    {% if car.image %}
+                    <img src="{{ car.image.url }}" alt="{{ car.full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    🚙 {{ car.brand }}
+                    {% endif %}
+                </div>
+                <div class="car-info">
+                    <div class="car-title">{{ car.brand }} {{ car.model }}</div>
+                    <div class="car-details">
+                        <span>{{ car.year }} yil</span>
+                        <span>•</span>
+                        <span>{{ car.get_transmission_display }}</span>
+                        <span>•</span>
+                        <span>{{ car.seats }} o'rin</span>
+                    </div>
+                    <div class="price">{{ car.price_per_day }} so'm/kun</div>
+                    <button class="btn-book" onclick="location.href='/bookings/create/{{ car.id }}/'">Bron qilish →</button>
+                </div>
+            </div>
+            {% empty %}
+            <p class="empty-message">Hozircha mavjud avtomobillar yo'q.</p>
+            {% endfor %}
+        </div>
+
+        <div class="section-title">📋 Mening bronlarim</div>
+        <div class="bookings-table">
+            {% if bookings %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Avtomobil</th>
+                        <th>Boshlanish</th>
+                        <th>Tugash</th>
+                        <th>Holat</th>
+                        <th>Summa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.car.full_name }}</td>
+                        <td>{{ booking.start_date|date:"d.m.Y H:i" }}</td>
+                        <td>{{ booking.end_date|date:"d.m.Y H:i" }}</td>
+                        <td><span class="status status-{{ booking.status }}">{{ booking.get_status_display }}</span></td>
+                        <td>{{ booking.total_price }} so'm</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-message">Hali hech qanday bron qilmagansiz. Yuqoridagi avtomobillardan birini bron qiling!</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

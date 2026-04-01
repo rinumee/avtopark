@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O'chirish - Avtopark</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; }
+        .container { max-width: 500px; margin: 100px auto; background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        h2 { color: #e74c3c; margin-bottom: 20px; }
+        p { color: #7f8c8d; margin-bottom: 30px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-block; margin: 0 10px; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-secondary { background: #95a5a6; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>⚠️ Foydalanuvchini o'chirish</h2>
+        <p>"{{ delete_user.username }}" ({{ delete_user.full_name }}) foydalanuvchisini o'chirishni xohlaysizmi?</p>
+        <p style="color: #e74c3c;">Bu amal qaytarib bo'lmaydi!</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Ha, o'chirish</button>
+            <a href="{% url 'admin_user_list' %}" class="btn btn-secondary">Bekor qilish</a>
+        </form>
+    </div>
+</body>
+</html>

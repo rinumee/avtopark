@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bron tafsilotlari - Avtopark</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #cce5ff; color: #004085; }
+        .status-active { background: #d1ecf1; color: #0c5460; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .info-value {
+            color: #7f8c8d;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📅 Bron tafsilotlari #{{ booking.id }}</h2>
+        
+        <div style="text-align: center;">
+            <span class="status status-{{ booking.status }}">{{ booking.get_status_display }}</span>
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <span class="info-label">Avtomobil:</span>
+                <span class="info-value">{{ booking.car.brand }} {{ booking.car.model }} ({{ booking.car.license_plate }})</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Foydalanuvchi:</span>
+                <span class="info-value">{{ booking.user.full_name }} ({{ booking.user.phone }})</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Boshlanish vaqti:</span>
+                <span class="info-value">{{ booking.start_date|date:"d.m.Y H:i" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tugash vaqti:</span>
+                <span class="info-value">{{ booking.end_date|date:"d.m.Y H:i" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Kunlar soni:</span>
+                <span class="info-value">{{ booking.get_duration_days }} kun</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Umumiy summa:</span>
+                <span class="info-value"><strong>{{ booking.total_price }} so'm</strong></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Depozit:</span>
+                <span class="info-value">{{ booking.deposit_paid }} so'm</span>
+            </div>
+            {% if booking.notes %}
+            <div class="info-row">
+                <span class="info-label">Qo'shimcha:</span>
+                <span class="info-value">{{ booking.notes }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            {% if booking.status == 'pending' %}
+                <a href="{% url 'booking_confirm' booking.id %}" class="btn btn-success">✅ Tasdiqlash</a>
+            {% endif %}
+            {% if booking.status == 'confirmed' %}
+                <a href="{% url 'booking_activate' booking.id %}" class="btn btn-primary">🚗 Faollashtirish</a>
+            {% endif %}
+            {% if booking.status == 'active' %}
+                <a href="{% url 'booking_complete' booking.id %}" class="btn btn-success">✅ Tugatish</a>
+            {% endif %}
+            {% if booking.status == 'pending' or booking.status == 'confirmed' %}
+                <a href="{% url 'booking_cancel' booking.id %}" class="btn btn-danger" onclick="return confirm('Bronni bekor qilishni xohlaysizmi?')">❌ Bekor qilish</a>
+            {% endif %}
+            <a href="{% url 'booking_list' %}" class="btn btn-secondary">← Orqaga</a>
+        </div>
+    </div>
+</body>
+</html>

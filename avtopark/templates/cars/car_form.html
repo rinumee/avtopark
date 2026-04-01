@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Avtopark</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            position: fixed;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-item a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">🚗 AVTOPARK</div>
+        <div class="nav-item"><a href="{% url 'admin_dashboard' %}">📊 Dashboard</a></div>
+        <div class="nav-item"><a href="{% url 'car_list' %}">🚗 Avtomobillar</a></div>
+        <div class="nav-item"><a href="{% url 'booking_list' %}">📅 Bronlar</a></div>
+        <div class="nav-item"><a href="{% url 'admin_user_list' %}">👥 Foydalanuvchilar</a></div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <h2>{{ title }}</h2>
+            <div>
+                <span style="margin-right: 20px;">👑 {{ user.full_name }}</span>
+                <a href="{% url 'logout' %}" class="logout-btn">Chiqish</a>
+            </div>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert alert-error">
+            <strong>Iltimos, quyidagi xatolarni to'g'rilang:</strong>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Brend</label>
+                        {{ form.brand }}
+                    </div>
+                    <div class="form-group">
+                        <label>Model</label>
+                        {{ form.model }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Yil</label>
+                        {{ form.year }}
+                    </div>
+                    <div class="form-group">
+                        <label>Rangi</label>
+                        {{ form.color }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Davlat raqami</label>
+                        {{ form.license_plate }}
+                    </div>
+                    <div class="form-group">
+                        <label>Uzatma</label>
+                        {{ form.transmission }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Yoqilg'i turi</label>
+                        {{ form.fuel_type }}
+                    </div>
+                    <div class="form-group">
+                        <label>Holat</label>
+                        {{ form.status }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Kunlik narx (so'm)</label>
+                        {{ form.price_per_day }}
+                    </div>
+                    <div class="form-group">
+                        <label>Depozit (so'm)</label>
+                        {{ form.deposit }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>O'rinlar soni</label>
+                        {{ form.seats }}
+                    </div>
+                    <div class="form-group">
+                        <label>Eshiklar soni</label>
+                        {{ form.doors }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Kilometraj</label>
+                        {{ form.mileage }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-check">
+                            {{ form.air_conditioner }}
+                            <span>Konditsioner</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Rasm</label>
+                    {{ form.image }}
+                </div>
+
+                <div class="form-group">
+                    <label>Tavsif</label>
+                    {{ form.description }}
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">{{ button_text }}</button>
+                    <a href="{% url 'car_list' %}" class="btn btn-secondary">Bekor qilish</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

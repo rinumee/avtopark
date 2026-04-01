@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Avtopark</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            position: fixed;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-item a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-active { background: #d1ecf1; color: #0c5460; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-available { background: #d4edda; color: #155724; }
+        .status-rented { background: #f8d7da; color: #721c24; }
+        .status-maintenance { background: #fff3cd; color: #856404; }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 2px;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">🚗 AVTOPARK</div>
+            <div class="nav-item active"><a href="{% url 'admin_dashboard' %}">📊 Dashboard</a></div>
+            <div class="nav-item"><a href="{% url 'car_list' %}">🚗 Avtomobillar</a></div>
+            <div class="nav-item"><a href="{% url 'booking_list' %}">📅 Bronlar</a></div>
+            <div class="nav-item"><a href="{% url 'admin_user_list' %}">👥 Foydalanuvchilar</a></div>
+            <div class="nav-item"><a href="{% url 'admin_settings' %}">⚙️ Sozlamalar</a></div>
+</div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <h2>Admin Panel</h2>
+            <div>
+                <span style="margin-right: 20px;">👑 {{ user.full_name }}</span>
+                <a href="{% url 'logout' %}" class="logout-btn">Chiqish</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_cars }}</div>
+                <div class="stat-label">Jami avtomobillar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ available_cars }}</div>
+                <div class="stat-label">Mavjud avtomobillar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ total_bookings }}</div>
+                <div class="stat-label">Jami bronlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ active_bookings }}</div>
+                <div class="stat-label">Faol bronlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ pending_bookings }}</div>
+                <div class="stat-label">Kutilayotgan bronlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ total_users }}</div>
+                <div class="stat-label">Foydalanuvchilar</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📅 So'nggi bronlar</div>
+            {% if recent_bookings %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Foydalanuvchi</th>
+                        <th>Avtomobil</th>
+                        <th>Boshlanish</th>
+                        <th>Tugash</th>
+                        <th>Holat</th>
+                        <th>Summa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in recent_bookings %}
+                    <tr>
+                        <td>{{ booking.user.full_name }}</td>
+                        <td>{{ booking.car.full_name }}</td>
+                        <td>{{ booking.start_date|date:"d.m.Y H:i" }}</td>
+                        <td>{{ booking.end_date|date:"d.m.Y H:i" }}</td>
+                        <td><span class="status status-{{ booking.status }}">{{ booking.get_status_display }}</span></td>
+                        <td>{{ booking.total_price }} so'm</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-message">Hech qanday bron topilmadi</p>
+            {% endif %}
+        </div>
+
+        <div class="section">
+            <div class="section-title">🚗 So'nggi qo'shilgan avtomobillar</div>
+            {% if recent_cars %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Brend/Model</th>
+                        <th>Davlat raqami</th>
+                        <th>Kunlik narx</th>
+                        <th>Holat</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for car in recent_cars %}
+                    <tr>
+                        <td>{{ car.brand }} {{ car.model }}</td>
+                        <td>{{ car.license_plate }}</td>
+                        <td>{{ car.price_per_day }} so'm</td>
+                        <td><span class="status status-{{ car.status }}">{{ car.get_status_display }}</span></td>
+                        <td>
+                            <a href="{% url 'car_edit' car.id %}" class="btn btn-edit btn-sm">✏️ Tahrirlash</a>
+                            <a href="{% url 'car_delete' car.id %}" class="btn btn-delete btn-sm">🗑️ O'chirish</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-message">Hech qanday avtomobil topilmadi</p>
+            {% endif %}
+            <div style="margin-top: 20px;">
+                <a href="{% url 'car_create' %}" class="btn btn-primary" style="text-decoration: none; display: inline-block;">+ Yangi avtomobil qo'shish</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
